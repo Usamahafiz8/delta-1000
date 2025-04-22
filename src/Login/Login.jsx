@@ -6,7 +6,6 @@ const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
-  const [hoveredBtn, setHoveredBtn] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -40,40 +39,65 @@ const Login = ({ onLogin }) => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: '#f4f6f8',
       fontFamily: 'Segoe UI, sans-serif',
-      padding: '0 16px',
+      position: 'relative',
+      overflow: 'hidden',
+    },
+    animatedBackground: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      zIndex: 0,
+      background: 'linear-gradient(-45deg, #74b9ff, #a29bfe, #55efc4, #ffeaa7)',
+      backgroundSize: '400% 400%',
+      animation: 'gradientBG 15s ease infinite',
+    },
+    floatingShapes: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      overflow: 'hidden',
+      zIndex: 0,
+    },
+    shapeCommon: {
+      position: 'absolute',
+      borderRadius: '50%',
+      opacity: 0.2,
+      animation: 'float 20s linear infinite',
     },
     card: {
       width: '100%',
       maxWidth: '420px',
       padding: '40px',
-      borderRadius: '16px',
+      borderRadius: '12px',
       backgroundColor: '#ffffff',
-      boxShadow: '0 6px 30px rgba(0, 0, 0, 0.1)',
+      boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
       display: 'flex',
       flexDirection: 'column',
+      zIndex: 1,
     },
     logo: {
       textAlign: 'center',
-      fontSize: '22px',
-      fontWeight: '700',
+      fontSize: '20px',
+      fontWeight: '600',
       color: '#2d3436',
       marginBottom: '10px',
     },
     title: {
-      fontSize: '26px',
+      fontSize: '24px',
       fontWeight: '600',
       marginBottom: '30px',
       textAlign: 'center',
       color: '#2d3436',
     },
     input: {
-      padding: '14px 16px',
-      marginBottom: '18px',
+      padding: '12px 16px',
+      marginBottom: '16px',
       border: '1px solid #dfe6e9',
-      borderRadius: '10px',
-      fontSize: '15px',
+      borderRadius: '8px',
+      fontSize: '14px',
       color: '#2d3436',
       outline: 'none',
     },
@@ -87,26 +111,23 @@ const Login = ({ onLogin }) => {
     },
     button: {
       padding: '12px 16px',
-      backgroundColor: hoveredBtn === 'login' ? '#1e272e' : '#2d3436',
+      backgroundColor: '#2d3436',
       color: '#ffffff',
       border: 'none',
-      borderRadius: '10px',
+      borderRadius: '8px',
       cursor: 'pointer',
       fontSize: '15px',
       fontWeight: '500',
-      marginBottom: '12px',
-      transition: 'background-color 0.2s ease-in-out',
+      marginBottom: '10px',
+      transition: 'all 0.3s ease',
+    },
+    buttonHover: {
+      backgroundColor: '#1e272e',
     },
     buttonSecondary: {
-      padding: '12px 16px',
-      backgroundColor: hoveredBtn === 'register' ? '#f1f2f6' : '#ffffff',
+      backgroundColor: '#ffffff',
       color: '#2d3436',
       border: '1px solid #2d3436',
-      borderRadius: '10px',
-      cursor: 'pointer',
-      fontSize: '15px',
-      fontWeight: '500',
-      transition: 'background-color 0.2s ease-in-out',
     },
     error: {
       color: '#d63031',
@@ -117,21 +138,56 @@ const Login = ({ onLogin }) => {
     link: {
       color: '#0984e3',
       cursor: 'pointer',
-      textDecoration: 'underline',
+      textDecoration: 'none',
     },
   };
 
+  const floatingCircles = [
+    { top: '10%', left: '20%', width: '80px', height: '80px', backgroundColor: '#6c5ce7' },
+    { top: '70%', left: '80%', width: '60px', height: '60px', backgroundColor: '#00cec9' },
+    { top: '50%', left: '30%', width: '100px', height: '100px', backgroundColor: '#fdcb6e' },
+  ];
+
   return (
     <div style={styles.wrapper}>
+      <style>{`
+        @keyframes gradientBG {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+          0% { transform: translateY(0); }
+          50% { transform: translateY(-20px); }
+          100% { transform: translateY(0); }
+        }
+
+        button:hover {
+          filter: brightness(0.9);
+        }
+
+        input:focus {
+          border-color: #0984e3;
+        }
+      `}</style>
+
+      <div style={styles.animatedBackground}></div>
+
+      <div style={styles.floatingShapes}>
+        {floatingCircles.map((circle, i) => (
+          <div key={i} style={{ ...styles.shapeCommon, ...circle }} />
+        ))}
+      </div>
+
       <form style={styles.card} onSubmit={handleSubmit}>
         <div style={styles.logo}>🚀 My Delta 10000 App</div>
-        <h2 style={styles.title}>Welcome Back</h2>
+        <h2 style={styles.title}>Sign In</h2>
 
         <input
           type="text"
           placeholder="Username"
           style={styles.input}
-          autoComplete="username"
           value={formData.username}
           onChange={(e) => setFormData({ ...formData, username: e.target.value })}
         />
@@ -139,7 +195,6 @@ const Login = ({ onLogin }) => {
           type="password"
           placeholder="Password"
           style={styles.input}
-          autoComplete="current-password"
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
         />
@@ -154,30 +209,17 @@ const Login = ({ onLogin }) => {
             />
             Remember Me
           </label>
-          <span style={styles.link} onClick={handleForgotPassword}>
-            Forgot Password?
-          </span>
+          <span style={styles.link} onClick={handleForgotPassword}>Forgot Password?</span>
         </div>
 
-        <button
-          type="submit"
-          style={styles.button}
-          onMouseEnter={() => setHoveredBtn('login')}
-          onMouseLeave={() => setHoveredBtn('')}
-        >
-          Login
-        </button>
-
+        <button type="submit" style={styles.button}>Login</button>
         <button
           type="button"
-          style={styles.buttonSecondary}
+          style={{ ...styles.button, ...styles.buttonSecondary }}
           onClick={handleRegisterRedirect}
-          onMouseEnter={() => setHoveredBtn('register')}
-          onMouseLeave={() => setHoveredBtn('')}
         >
           Register
         </button>
-
         {error && <p style={styles.error}>{error}</p>}
       </form>
     </div>
